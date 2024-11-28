@@ -46,7 +46,7 @@ func main()
 
 In this example, the filename `CON..` is cleaned using Pathologize, and the output is `CON_`. The cleaned filename is safe to use on all modern operating systems.
 
-There is also a helper function CleanPath that will clean a full path, including the directory and file name.
+`CleanPath` will clean a full path by running `Clean` on each directory segment and the file name. This is useful when you need to clean a full path, including the directory structure.    
 
 ```go
 package main
@@ -63,7 +63,7 @@ func main()
 
 ```
 
-Lastly there's a helper function IsClean that will return true if the filename is already clean, and false if it is not.
+Lastly there's a helper function `IsClean` that will return true if the filename is already clean, and false if it is not.
 
 ```go
 package main
