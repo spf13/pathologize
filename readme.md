@@ -1,3 +1,6 @@
+![pathologize](https://github.com/user-attachments/assets/629a2fd0-a939-42d3-884f-489942aa783f)
+
+
 # Pathologize
 
 Pathologize is a Go library designed to fix what ails the paths in your application.  It ensures that the paths you work with are safe to use on all modern operating and file systems.
