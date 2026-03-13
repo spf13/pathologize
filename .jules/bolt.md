@@ -1,0 +1,3 @@
+## 2024-03-13 - [Pre-compiling Regex and Pre-splitting Strings in Go]
+**Learning:** In Go, calling `regexp.MustCompile()` and `strings.Split()` inside repeatedly invoked functions is a classic performance pitfall. Moving these expressions to package-level variables allows them to be evaluated only once at runtime initialization, significantly decreasing CPU overhead and memory allocations. Both `regexp.Regexp` and read-only slices are completely thread-safe for concurrent use by multiple goroutines.
+**Action:** Always pre-compile regular expressions and pre-split static strings at the package level when they are used in functions that are called frequently or in loops.
