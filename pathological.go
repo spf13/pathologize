@@ -53,6 +53,7 @@ func IsClean(filename string) bool {
 }
 
 func Clean(filename string) string {
+	filename = truncateFilename(filename)
 	filename = removeInvalidCharacters(filename)
 	filename = removeTrailing(filename)
 	filename = removeLeadingSpaces(filename)
