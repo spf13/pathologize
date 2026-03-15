@@ -72,7 +72,7 @@ func removeReservedWithExtension(filename string) string {
 	basefilename := filenameWithoutExtension(filename)
 	newfilename := removeReservedNames(basefilename)
 	if basefilename != newfilename {
-		return newfilename + filepath.Ext(filename)
+		return newfilename + filename[len(basefilename):]
 	}
 	return filename
 }
@@ -84,7 +84,14 @@ func removeInvalidCharacters(filename string) string {
 }
 
 func filenameWithoutExtension(filename string) string {
-	return strings.TrimSuffix(filename, filepath.Ext(filename))
+	// SECURITY: We use the first dot instead of filepath.Ext (which gets the last extension)
+	// because Windows reserved names like CON are treated as the CON device even with
+	// multiple extensions (e.g. CON.tar.gz). We must isolate the true base name.
+	idx := strings.Index(filename, ".")
+	if idx != -1 {
+		return filename[:idx]
+	}
+	return filename
 }
 
 func removeReservedNames(filename string) string {
