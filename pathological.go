@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"unicode"
 )
 
 const (
@@ -98,11 +99,10 @@ func removeReservedNames(filename string) string {
 }
 
 func removeTrailing(filename string) string {
-	// Define the regular expression to match trailing dots and spaces
-	re := regexp.MustCompile(`[.\s]+$`)
-
-	// Replace all trailing dots and spaces with an empty string
-	return re.ReplaceAllString(filename, "")
+	// Replace all trailing dots and spaces efficiently
+	return strings.TrimRightFunc(filename, func(r rune) bool {
+		return r == '.' || unicode.IsSpace(r)
+	})
 }
 
 func removeLeadingSpaces(filename string) string {
