@@ -58,6 +58,8 @@ func Clean(filename string) string {
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
+	filename = truncateFilename(filename)
+	filename = removeTrailing(filename) // Truncating might expose trailing dots/spaces
 	return filenameNotBlank(filename)
 }
 

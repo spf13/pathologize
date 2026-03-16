@@ -1,0 +1,4 @@
+## 2024-03-16 - Missing Call to Implemented Security Function
+**Vulnerability:** The library claims to restrict filenames that are too long (which can lead to DoS or file system errors), and actually implemented and unit-tested a `truncateFilename` function, but failed to actually call it inside the main `Clean` function. This meant filenames longer than 255 characters were not being restricted as stated.
+**Learning:** Even well-tested utility functions can be useless if they aren't linked into the main execution path. Unit testing `truncateFilename` wasn't enough; integration testing of `Clean` with a long filename was missed.
+**Prevention:** Always add end-to-end integration tests or tests of the primary API surface for every security boundary condition, even if the underlying utility function is tested.

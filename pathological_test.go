@@ -140,11 +140,15 @@ func Test_CleanFilename(t *testing.T) {
 		{"windows reserved", "$Mft", "$Mft_"},
 		{"windows reserved period", "$Mft.", "$Mft_"},
 		{"reserved with extension", "$Mft.txt", "$Mft_.txt"},
+		{"long string",
+			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbaz",
+			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoo",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Clean(tt.filename); got != tt.want {
-				t.Errorf("removeReservedNames() = %v, want %v", got, tt.want)
+				t.Errorf("Clean() = %v, want %v", got, tt.want)
 			}
 		})
 	}
