@@ -36,6 +36,7 @@ const (
 
 var (
 	CharacterFilterRegex = regexp.MustCompile(characterFilter)
+	reservedNamesSlice   = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
 	maxLength            = 255
 )
 
@@ -79,6 +80,10 @@ func removeReservedWithExtension(filename string) string {
 
 // CleanFilename cleans a filename by removing all characters that are not allowed in filenames
 func removeInvalidCharacters(filename string) string {
+	// Optimization: strings.ContainsAny is much faster to check if a replacement is even needed
+	if !strings.ContainsAny(filename, "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f\\/:*?\"<>|@!") {
+		return filename
+	}
 	filename = CharacterFilterRegex.ReplaceAllString(filename, "")
 	return filename
 }
@@ -88,8 +93,8 @@ func filenameWithoutExtension(filename string) string {
 }
 
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
-	for _, reservedName := range reservedNames {
+	// Optimization: replacing strings.Split inside the function with pre-computed slice
+	for _, reservedName := range reservedNamesSlice {
 		if strings.EqualFold(filename, reservedName) {
 			return reservedName + "_"
 		}
@@ -98,11 +103,8 @@ func removeReservedNames(filename string) string {
 }
 
 func removeTrailing(filename string) string {
-	// Define the regular expression to match trailing dots and spaces
-	re := regexp.MustCompile(`[.\s]+$`)
-
-	// Replace all trailing dots and spaces with an empty string
-	return re.ReplaceAllString(filename, "")
+	// Optimization: replacing regex trailing match with strings.TrimRight for performance
+	return strings.TrimRight(filename, ". \t\n\v\f\r")
 }
 
 func removeLeadingSpaces(filename string) string {
