@@ -58,6 +58,8 @@ func Clean(filename string) string {
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
+	// Add input length limits to prevent DoS risks and file system errors
+	filename = truncateFilename(filename)
 	return filenameNotBlank(filename)
 }
 
