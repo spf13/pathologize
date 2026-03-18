@@ -37,7 +37,19 @@ const (
 var (
 	CharacterFilterRegex = regexp.MustCompile(characterFilter)
 	maxLength            = 255
+
+	reservedNamesList = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
+	// Use map lookup for O(1) performance instead of iterating over slice
+	reservedNamesMap  = make(map[string]struct{}, len(reservedNamesList))
+	// Pre-compile regex to avoid compiling on every invocation
+	trailingRegex     = regexp.MustCompile(`[.\s]+$`)
 )
+
+func init() {
+	for _, name := range reservedNamesList {
+		reservedNamesMap[strings.ToLower(name)] = struct{}{}
+	}
+}
 
 func CleanPath(path string) string {
 	pathParts := strings.Split(path, string(filepath.Separator))
@@ -88,21 +100,20 @@ func filenameWithoutExtension(filename string) string {
 }
 
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
-	for _, reservedName := range reservedNames {
-		if strings.EqualFold(filename, reservedName) {
-			return reservedName + "_"
+	if _, ok := reservedNamesMap[strings.ToLower(filename)]; ok {
+		// Use original case but append underscore
+		for _, reservedName := range reservedNamesList {
+			if strings.EqualFold(filename, reservedName) {
+				return reservedName + "_"
+			}
 		}
 	}
 	return filename
 }
 
 func removeTrailing(filename string) string {
-	// Define the regular expression to match trailing dots and spaces
-	re := regexp.MustCompile(`[.\s]+$`)
-
 	// Replace all trailing dots and spaces with an empty string
-	return re.ReplaceAllString(filename, "")
+	return trailingRegex.ReplaceAllString(filename, "")
 }
 
 func removeLeadingSpaces(filename string) string {
