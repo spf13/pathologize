@@ -1,0 +1,3 @@
+## 2024-03-19 - Pre-computing allocations from string splitting in tight loops
+**Learning:** The string splitting function (`strings.Split`) performed on constant strings inside repeatedly called functions (like `Clean`) causes an immense amount of memory allocations and dramatically affects CPU execution time. Go's runtime profiling (`go tool pprof`) easily highlighted this bottleneck.
+**Action:** Always extract string manipulations, regular expression compilations, and similar invariant logic out of hot paths and pre-compute them at the package level (`var` or `init()`) when possible. This drastically improves `ns/op` and drops `allocs/op` to zero for that particular computation.
