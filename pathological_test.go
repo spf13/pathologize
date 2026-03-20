@@ -2,6 +2,7 @@ package pathologize
 
 import (
 	"testing"
+	"unicode/utf8"
 )
 
 func Test_truncateFilename(t *testing.T) {
@@ -144,9 +145,41 @@ func Test_CleanFilename(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Clean(tt.filename); got != tt.want {
-				t.Errorf("removeReservedNames() = %v, want %v", got, tt.want)
+				t.Errorf("Clean() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func Test_CleanFilename_LengthLimitsAndUTF8(t *testing.T) {
+	// A string longer than 255 bytes made of single-byte characters
+	longName := "foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbaz"
+	cleaned := Clean(longName)
+	if len(cleaned) > 255 {
+		t.Errorf("expected max length 255, got %d", len(cleaned))
+	}
+	if cleaned != "foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoo" {
+		t.Errorf("expected properly truncated single-byte string")
+	}
+
+	// A string made of multi-byte UTF-8 characters (👍 is 4 bytes).
+	// 100 * 4 = 400 bytes, which exceeds 255 bytes.
+	utf8LongName := ""
+	for i := 0; i < 100; i++ {
+		utf8LongName += "👍"
+	}
+	cleanedUtf8 := Clean(utf8LongName)
+	if len(cleanedUtf8) > 255 {
+		t.Errorf("expected max length 255, got %d", len(cleanedUtf8))
+	}
+
+	// Because each rune is 4 bytes, 255 is not divisible by 4.
+	// 252 is the highest multiple of 4 less than 255.
+	if len(cleanedUtf8) != 252 {
+		t.Errorf("expected truncated length 252 for multi-byte, got %d", len(cleanedUtf8))
+	}
+	if !utf8.ValidString(cleanedUtf8) {
+		t.Errorf("expected multi-byte truncated string to be valid UTF-8")
 	}
 }
 

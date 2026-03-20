@@ -58,6 +58,7 @@ func Clean(filename string) string {
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
+	filename = truncateFilename(filename)
 	return filenameNotBlank(filename)
 }
 
@@ -110,8 +111,15 @@ func removeLeadingSpaces(filename string) string {
 }
 
 func truncateFilename(filename string) string {
-	if len(filename) > maxLength {
-		return filename[:maxLength]
+	if len(filename) <= maxLength {
+		return filename
 	}
-	return filename
+	var validLen int
+	for i := range filename {
+		if i > maxLength {
+			break
+		}
+		validLen = i
+	}
+	return filename[:validLen]
 }
