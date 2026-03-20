@@ -1,0 +1,3 @@
+## 2024-05-24 - Expensive compilations in frequently called functions
+**Learning:** In Go, functions like `regexp.MustCompile` and `strings.Split` on static strings create significant overhead when placed inside functions that are called frequently or repetitively (e.g., during path sanitization). Compiling regexes and creating static slices dynamically on every invocation results in numerous unnecessary allocations and CPU cycles.
+**Action:** Always hoist regex compilation (`regexp.MustCompile`) and static list initialization (`strings.Split` on constants) into global package-level variables or an init block, so they are only computed once at application startup.
