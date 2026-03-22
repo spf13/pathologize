@@ -69,10 +69,15 @@ func filenameNotBlank(filename string) string {
 }
 
 func removeReservedWithExtension(filename string) string {
-	basefilename := filenameWithoutExtension(filename)
-	newfilename := removeReservedNames(basefilename)
-	if basefilename != newfilename {
-		return newfilename + filepath.Ext(filename)
+	dotIndex := strings.Index(filename, ".")
+	if dotIndex != -1 {
+		basefilename := filename[:dotIndex]
+		newfilename := removeReservedNames(basefilename)
+		if basefilename != newfilename {
+			return newfilename + filename[dotIndex:]
+		}
+	} else {
+		return removeReservedNames(filename)
 	}
 	return filename
 }

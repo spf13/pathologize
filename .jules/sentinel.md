@@ -1,0 +1,4 @@
+## 2024-03-22 - [Path Traversal / DoS bypass in Windows Reserved Names]
+**Vulnerability:** A bypass in sanitization logic for Windows reserved filenames (e.g., `COM1`, `CON`, `NUL`) when a file has multiple extensions (e.g., `COM1.tar.gz`).
+**Learning:** `filepath.Ext(filename)` only returns the *last* extension (`.gz` in `COM1.tar.gz`). Windows treats the substring before the *first* dot as the base device name. Therefore, using `filepath.Ext` to strip extensions for reserved name checking leaves a base of `COM1.tar`, which fails to match `COM1` and bypasses the filter, potentially leading to errors or DoS when creating the file on Windows.
+**Prevention:** Always use `strings.Index(filename, ".")` to find the true base name (everything before the very first dot) when checking for Windows reserved filenames, rather than relying on `filepath.Ext`.
