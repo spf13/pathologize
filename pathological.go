@@ -58,7 +58,7 @@ func Clean(filename string) string {
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
-	return filenameNotBlank(filename)
+	return filenameNotBlank(truncateFilename(filename))
 }
 
 func filenameNotBlank(filename string) string {
