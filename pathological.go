@@ -37,6 +37,10 @@ const (
 var (
 	CharacterFilterRegex = regexp.MustCompile(characterFilter)
 	maxLength            = 255
+	// allReservedNames is a pre-calculated list of all dos and windows reserved names
+	allReservedNames = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
+	// trailingSpaceOrDot is a regex to match trailing dots and spaces
+	trailingSpaceOrDot = regexp.MustCompile(`[.\s]+$`)
 )
 
 func CleanPath(path string) string {
@@ -88,8 +92,7 @@ func filenameWithoutExtension(filename string) string {
 }
 
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
-	for _, reservedName := range reservedNames {
+	for _, reservedName := range allReservedNames {
 		if strings.EqualFold(filename, reservedName) {
 			return reservedName + "_"
 		}
@@ -98,11 +101,9 @@ func removeReservedNames(filename string) string {
 }
 
 func removeTrailing(filename string) string {
-	// Define the regular expression to match trailing dots and spaces
-	re := regexp.MustCompile(`[.\s]+$`)
 
 	// Replace all trailing dots and spaces with an empty string
-	return re.ReplaceAllString(filename, "")
+	return trailingSpaceOrDot.ReplaceAllString(filename, "")
 }
 
 func removeLeadingSpaces(filename string) string {
