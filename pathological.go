@@ -37,6 +37,7 @@ const (
 var (
 	CharacterFilterRegex = regexp.MustCompile(characterFilter)
 	maxLength            = 255
+	reservedNamesList    = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
 )
 
 func CleanPath(path string) string {
@@ -88,8 +89,7 @@ func filenameWithoutExtension(filename string) string {
 }
 
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
-	for _, reservedName := range reservedNames {
+	for _, reservedName := range reservedNamesList {
 		if strings.EqualFold(filename, reservedName) {
 			return reservedName + "_"
 		}
