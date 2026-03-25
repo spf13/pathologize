@@ -54,6 +54,7 @@ func IsClean(filename string) bool {
 
 func Clean(filename string) string {
 	filename = removeInvalidCharacters(filename)
+	filename = truncateFilename(filename)
 	filename = removeTrailing(filename)
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
