@@ -1,0 +1,3 @@
+## 2024-03-25 - Caching Regex and Splits globally
+**Learning:** In Go, calling `regexp.MustCompile` and `strings.Split` inside frequently called path processing functions can lead to extreme performance degradation due to unnecessary allocations and executions.
+**Action:** When identifying bottlenecks in functions that handle strings or regular expressions repeatedly, extract `regexp.MustCompile` and static `strings.Split` calls to global variables or initialized struct fields to improve performance significantly.
