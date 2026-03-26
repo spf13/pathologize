@@ -87,9 +87,12 @@ func filenameWithoutExtension(filename string) string {
 	return strings.TrimSuffix(filename, filepath.Ext(filename))
 }
 
+var (
+	reservedNamesList = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
+)
+
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
-	for _, reservedName := range reservedNames {
+	for _, reservedName := range reservedNamesList {
 		if strings.EqualFold(filename, reservedName) {
 			return reservedName + "_"
 		}
@@ -98,11 +101,9 @@ func removeReservedNames(filename string) string {
 }
 
 func removeTrailing(filename string) string {
-	// Define the regular expression to match trailing dots and spaces
-	re := regexp.MustCompile(`[.\s]+$`)
-
 	// Replace all trailing dots and spaces with an empty string
-	return re.ReplaceAllString(filename, "")
+	// strings.TrimRight is significantly faster than using a regular expression
+	return strings.TrimRight(filename, ". \t\n\v\f\r")
 }
 
 func removeLeadingSpaces(filename string) string {
