@@ -1,0 +1,4 @@
+## 2024-05-20 - Missing Length Enforcement in Path Sanitizer
+**Vulnerability:** The core `Clean(filename string)` path sanitization function was missing a call to the internally defined `truncateFilename` helper. This allowed sanitized paths to exceed safe limits (255 chars), which could potentially lead to denial-of-service, crashes, or buffer overflows in applications relying on `pathologize` to prepare paths for underlying operating system or filesystem APIs.
+**Learning:** Even when security/sanitization helpers (like `truncateFilename`) are implemented in a codebase and have unit tests, they may be accidentally omitted from the main control flow (e.g. `Clean()`).
+**Prevention:** Ensure integration tests check end-to-end functionality for all constraints. Security-critical boundary checks like maximum length limits should always be explicitly enforced in the primary entry point function.
