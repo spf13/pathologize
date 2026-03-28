@@ -56,6 +56,7 @@ func Clean(filename string) string {
 	filename = removeInvalidCharacters(filename)
 	filename = removeTrailing(filename)
 	filename = removeLeadingSpaces(filename)
+	filename = truncateFilename(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
 	return filenameNotBlank(filename)
