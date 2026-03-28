@@ -1,0 +1,3 @@
+## 2024-05-28 - Regex Overhead in Hot Paths
+**Learning:** In Go, calling `regexp.MustCompile` inside a function body is a significant performance anti-pattern as it compiles the regex on every single invocation. Even when hoisting the compiled regex globally, native `strings` functions (like `strings.TrimRight`) can outperform simple regex replacements by multiple orders of magnitude (e.g., 900ns/op down to ~20ns/op) and avoid heap allocations entirely.
+**Action:** Always prefer native `strings` functions over the `regexp` package for straightforward string manipulations (trimming, prefix/suffix matching, basic character filtering). When regex is strictly required, ensure `regexp.MustCompile` is hoisted to the package level, not instantiated within the function body.
