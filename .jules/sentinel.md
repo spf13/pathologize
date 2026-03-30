@@ -1,0 +1,4 @@
+## 2024-03-30 - Fix Windows Path Traversal via Multi-Extension Reserved Names
+**Vulnerability:** The pathologize library failed to properly sanitize Windows reserved file names (like CON, PRN) if they had multiple extensions (e.g., CON.tar.gz). It only stripped the final extension (using filepath.Ext), meaning CON.tar was considered the base name and allowed through, bypassing reserved name filters.
+**Learning:** Windows treats any extension on a reserved name as the reserved device itself. Path sanitization targeting Windows reserved names must examine the base name *before* the first extension (splitting on the first '.'), not just the base name excluding the final extension.
+**Prevention:** When performing validation or sanitization against reserved names, always evaluate the true base name of the file by ignoring all trailing extensions, being careful to handle edge cases like dotfiles (e.g. '.hidden').
