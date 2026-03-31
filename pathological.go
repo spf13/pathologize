@@ -72,7 +72,8 @@ func removeReservedWithExtension(filename string) string {
 	basefilename := filenameWithoutExtension(filename)
 	newfilename := removeReservedNames(basefilename)
 	if basefilename != newfilename {
-		return newfilename + filepath.Ext(filename)
+		extension := strings.TrimPrefix(filename, basefilename)
+		return newfilename + extension
 	}
 	return filename
 }
@@ -84,7 +85,7 @@ func removeInvalidCharacters(filename string) string {
 }
 
 func filenameWithoutExtension(filename string) string {
-	return strings.TrimSuffix(filename, filepath.Ext(filename))
+	return strings.SplitN(filename, ".", 2)[0]
 }
 
 func removeReservedNames(filename string) string {

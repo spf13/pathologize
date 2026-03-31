@@ -1,0 +1,4 @@
+## 2024-03-31 - Fix Windows Reserved Names Multiple Extensions Bypass
+**Vulnerability:** Path traversal/bypass via Windows reserved names with multiple extensions (e.g., `CON.tar.gz`). The application stripped only the final extension before checking if the base name was reserved.
+**Learning:** Windows treats any file with a base name matching a reserved device name (e.g., `CON`, `PRN`), regardless of how many extensions follow it, as the reserved device itself. Extracting just the last extension using functions like `filepath.Ext()` is insufficient for properly verifying base names on Windows.
+**Prevention:** To sanitize paths for Windows compatibility, the base name without *any* extensions must be evaluated against reserved names. Always split by the first dot `.` or continuously strip extensions until none remain to get the true base name.
