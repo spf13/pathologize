@@ -1,0 +1,4 @@
+## 2024-04-01 - Fix Windows Reserved Names Sanitization with Multi-Part Extensions
+**Vulnerability:** Windows path parsing vulnerabilities due to flawed reserved name sanitization for multiple extensions. The `pathologize` package was using `filepath.Ext` to strip extensions to check if the base name was a reserved name (e.g., `CON`). However, `filepath.Ext` only returns the *last* extension (`.gz` from `CON.tar.gz`), meaning `CON.tar` was checked instead of `CON`, bypassing the filter. Windows correctly treats `CON.tar.gz` as the `CON` device.
+**Learning:** `filepath.Ext` is insufficient for sanitizing base names on systems like Windows where reserved names are ignored regardless of any appended extensions. We must isolate the absolute base string up to the first `.`.
+**Prevention:** Use `strings.SplitN(filename, ".", 2)[0]` instead of trimming `filepath.Ext` when needing the true base filename for security checks or sanitization against reserved names.
