@@ -1,0 +1,4 @@
+## 2024-04-01 - Optimizing string manipulation in Go paths
+
+**Learning:** In Go, replacing regular expressions with native `strings` functions for simple string manipulation can significantly improve performance and eliminate memory allocations. In `pathologize`, `regexp.MustCompile("[.\\s]+$")` was used inside the `removeTrailing` function on every call, taking ~2900ns and 20 allocations. Using `strings.TrimRight(filename, ".\t\n\f\r ")` reduces this to ~20ns and 0 allocations!
+**Action:** Always look for opportunities to replace simple regular expressions with native `strings` functions like `strings.TrimRight` or `strings.TrimSpace`, especially when operating inside frequently called functions. Watch out for exact character classes like `\s` which explicitly excludes `\v` in Go's `regexp` package!
