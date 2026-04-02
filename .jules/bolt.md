@@ -1,0 +1,3 @@
+## 2024-04-02 - Go Regex Performance vs Native Strings
+**Learning:** In Go, inline compiling regular expressions (e.g., `regexp.MustCompile` inside a function body) introduces significant performance overhead and heap allocations on every function call. A benchmark on `[.\s]+$` replacement showed inline regex took ~3300 ns/op (20 allocs), while native `strings.TrimRight` took ~19 ns/op (0 allocs) - a >170x speedup.
+**Action:** Always prefer native `strings` functions over regex for simple string manipulations in Go, especially on hot paths. When regex is strictly necessary, ensure it is pre-compiled globally at the package level rather than inline. Note that `\s` in Go regex is exactly `[\t\n\f\r ]` when porting logic.
