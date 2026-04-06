@@ -1,0 +1,3 @@
+## 2024-04-06 - Replacing Regex with Native Strings and Pre-computing Splits
+**Learning:** In Go, replacing inline `regexp.MustCompile` and frequent regular expression invocations with native `strings` functions (like `strings.TrimRight`) dramatically speeds up path cleaning and completely removes allocation overhead on the hot path. Similarly, hoisting repeated `strings.Split` calls for static lists out of frequently called functions to package-level variables minimizes memory allocations and cuts execution time.
+**Action:** Always prefer native `strings` functions over the `regexp` package for simple string manipulations and pre-calculate invariant static structures globally instead of recalculating them inside function bodies.
