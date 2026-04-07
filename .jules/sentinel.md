@@ -1,0 +1,4 @@
+## 2024-04-07 - Fix Windows reserved name bypass via multi-part extensions
+**Vulnerability:** A DOS reserved name bypass in the path sanitization routine. Filenames like `CON.tar.gz` or `CON.txt.txt` bypassed the reserved name check.
+**Learning:** `filepath.Ext()` in Go only returns the final extension (e.g., `.gz` from `CON.tar.gz`). If it is used to extract the base name, the result will still contain earlier extensions (e.g., `CON.tar`), causing the exact match against the reserved name dictionary (e.g., `CON`) to fail, leaving the potentially dangerous reserved name intact. On Windows, executing `CON.tar.gz` invokes the reserved device.
+**Prevention:** When validating the base name of a file against reserved lists, always split at the first dot using `strings.SplitN(filename, ".", 2)[0]` instead of relying on `filepath.Ext()`. Reconstruct the full string via `strings.TrimPrefix` to maintain all intermediate extensions.
