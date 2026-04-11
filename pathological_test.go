@@ -140,6 +140,8 @@ func Test_CleanFilename(t *testing.T) {
 		{"windows reserved", "$Mft", "$Mft_"},
 		{"windows reserved period", "$Mft.", "$Mft_"},
 		{"reserved with extension", "$Mft.txt", "$Mft_.txt"},
+		{"reserved with multiple extensions", "CON.tar.gz", "CON_.tar.gz"},
+		{"reserved with duplicate extensions", "CON.txt.txt", "CON_.txt.txt"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

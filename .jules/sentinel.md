@@ -1,0 +1,4 @@
+## $(date +%Y-%m-%d) - Path Sanitization Vulnerability (Windows Reserved Names)
+**Vulnerability:** Windows treats any extension on a DOS reserved name (e.g., 'CON.tar.gz' or 'CON.txt.txt') as the reserved device itself. The application was failing to properly sanitize reserved names when multiple extensions were present because it relied on `filepath.Ext()`, which only extracts the final extension.
+**Learning:** When performing path sanitization on Windows reserved names, the base name without *any* extensions must be considered, not just the final extension. `filepath.Ext()` is insufficient for this specific validation.
+**Prevention:** Instead of using `filepath.Ext()`, extract the true base name by splitting at the first dot (e.g., `strings.SplitN(filename, ".", 2)[0]`) and preserve the full extension set using `strings.TrimPrefix(filename, basefilename)`.
