@@ -37,6 +37,8 @@ const (
 var (
 	CharacterFilterRegex = regexp.MustCompile(characterFilter)
 	maxLength            = 255
+	// Pre-calculate reserved names to avoid allocating on every call
+	reservedNamesList = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
 )
 
 func CleanPath(path string) string {
@@ -88,8 +90,7 @@ func filenameWithoutExtension(filename string) string {
 }
 
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
-	for _, reservedName := range reservedNames {
+	for _, reservedName := range reservedNamesList {
 		if strings.EqualFold(filename, reservedName) {
 			return reservedName + "_"
 		}
@@ -98,11 +99,9 @@ func removeReservedNames(filename string) string {
 }
 
 func removeTrailing(filename string) string {
-	// Define the regular expression to match trailing dots and spaces
-	re := regexp.MustCompile(`[.\s]+$`)
-
-	// Replace all trailing dots and spaces with an empty string
-	return re.ReplaceAllString(filename, "")
+	// \s matches [\t\n\f\r ] in Go regex.
+	// TrimRight is significantly faster and allocates less than regexp.
+	return strings.TrimRight(filename, ".\t\n\f\r ")
 }
 
 func removeLeadingSpaces(filename string) string {
