@@ -98,11 +98,9 @@ func removeReservedNames(filename string) string {
 }
 
 func removeTrailing(filename string) string {
-	// Define the regular expression to match trailing dots and spaces
-	re := regexp.MustCompile(`[.\s]+$`)
-
-	// Replace all trailing dots and spaces with an empty string
-	return re.ReplaceAllString(filename, "")
+	// Use strings.TrimRight instead of regexp to avoid compilation overhead.
+	// We account for '.' and whitespace matching Go's \s definition: [\t\n\f\r ]
+	return strings.TrimRight(filename, ".\t\n\f\r ")
 }
 
 func removeLeadingSpaces(filename string) string {

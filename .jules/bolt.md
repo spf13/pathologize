@@ -1,0 +1,3 @@
+## 2025-04-13 - Inline Regex Compilation Performance Hit
+**Learning:** Compiling regular expressions using `regexp.MustCompile` inside a frequently called function (like `removeTrailing` in this path sanitizer) introduces extreme performance overhead (3200 ns/op vs 20 ns/op) and repeated heap allocations (20 vs 0). Go's native `strings` functions can often completely replace simple regex patterns. Go's regex `\s` character class explicitly represents `[\t\n\f\r ]`, avoiding `\v` which standard library functions often include.
+**Action:** When replacing regexes with string manipulation, precisely match the character classes to avoid regressions. Avoid `regexp` for simple character trimming where `strings.TrimRight` with a defined cutset can easily suffice.
