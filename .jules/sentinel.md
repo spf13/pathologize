@@ -1,0 +1,4 @@
+## 2024-04-15 - Path Sanitization Bypassed by Multiple Extensions
+**Vulnerability:** Windows reserved names with multiple extensions (like `CON.tar.gz`) bypassed the sanitization logic because `filepath.Ext()` only captured the final extension (`.gz`). This resulted in the base name being evaluated as `CON.tar` rather than `CON`, allowing reserved names to evade detection and creating path traversal/system exploitation risks.
+**Learning:** `filepath.Ext()` is insufficient for correctly identifying the base name for reserved file validation on systems that treat `CON.*` broadly.
+**Prevention:** Use string splitting at the first dot (`strings.SplitN(filename, ".", 2)[0]`) to ensure the correct base name is isolated, and preserve the full remaining extension suffix using `strings.TrimPrefix`.
