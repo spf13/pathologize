@@ -1,0 +1,3 @@
+## 2024-04-16 - Inline Regex Compilation and Repeated String Splits
+**Learning:** Avoid compiling regular expressions inline within frequently called functions (e.g., using regexp.MustCompile inside removeTrailing), as it introduces massive performance bottlenecks and heap allocations on every call. Additionally, avoid repeated memory allocations from operations like strings.Split on static strings inside frequently called functions (e.g., in removeReservedNames).
+**Action:** Replace simple regex matching with native strings functions like strings.TrimRight, and pre-calculate/store constant string split results in package-level variables to significantly improve performance and minimize memory allocations.

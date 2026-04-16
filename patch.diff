@@ -1,0 +1,47 @@
+<<<<<<< SEARCH
+var (
+	CharacterFilterRegex = regexp.MustCompile(characterFilter)
+	maxLength            = 255
+)
+=======
+var (
+	CharacterFilterRegex = regexp.MustCompile(characterFilter)
+	maxLength            = 255
+	reservedNamesList    = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
+)
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+func removeReservedNames(filename string) string {
+	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
+	for _, reservedName := range reservedNames {
+		if strings.EqualFold(filename, reservedName) {
+			return reservedName + "_"
+		}
+	}
+	return filename
+}
+=======
+func removeReservedNames(filename string) string {
+	for _, reservedName := range reservedNamesList {
+		if strings.EqualFold(filename, reservedName) {
+			return reservedName + "_"
+		}
+	}
+	return filename
+}
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+func removeTrailing(filename string) string {
+	// Define the regular expression to match trailing dots and spaces
+	re := regexp.MustCompile(`[.\s]+$`)
+
+	// Replace all trailing dots and spaces with an empty string
+	return re.ReplaceAllString(filename, "")
+}
+=======
+func removeTrailing(filename string) string {
+	// Replace all trailing dots and spaces with an empty string
+	// The \s character class matches [\t\n\f\r ]
+	return strings.TrimRight(filename, ".\t\n\f\r ")
+}
+>>>>>>> REPLACE
