@@ -1,0 +1,3 @@
+## 2024-05-23 - Go Regex and Allocation Bottlenecks
+**Learning:** Compiling regex patterns (like `regexp.MustCompile`) inside frequently called functions (like `removeTrailing`) causes massive performance bottlenecks and thousands of heap allocations per operation in Go. Similarly, calling `strings.Split` repeatedly on static strings (like `dosReservedNames`) also incurs high allocation costs.
+**Action:** Always pre-compile regex patterns as global variables, or better yet, replace simple regex operations with native string manipulation functions like `strings.TrimRight`. Always pre-calculate and store the results of static string manipulations as package-level variables to avoid repeating allocations inside hot loops.
