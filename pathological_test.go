@@ -235,3 +235,22 @@ func Test_characterFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestCleanFilenameDOSReserved(t *testing.T) {
+	tests := []struct {
+		name     string
+		filename string
+		want     string
+	}{
+		{"double extension", "CON.tar.gz", "CON_.tar.gz"},
+		{"triple extension", "CON.tar.gz.zip", "CON_.tar.gz.zip"},
+		{"repeated extensions", "CON.txt.txt", "CON_.txt.txt"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Clean(tt.filename); got != tt.want {
+				t.Errorf("Clean() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
