@@ -1,0 +1,4 @@
+## 2024-04-21 - Windows Reserved Names with Multiple Extensions Bypass
+**Vulnerability:** Path sanitization logic failed to properly identify Windows reserved names (like `CON`) if they contained multiple extensions (e.g., `CON.tar.gz`). It only checked the base name extracted by `filepath.Ext()`, which evaluates to `CON.tar` (not reserved) rather than `CON`.
+**Learning:** `filepath.Ext()` only extracts the final extension. Windows treats *any* combination of extensions appended to a reserved device name as pointing to the reserved device.
+**Prevention:** Do not rely on `filepath.Ext()` to find the base name for reserved name validation. Instead, find the first dot (e.g., using `strings.SplitN(filename, ".", 2)[0]`) and validate that true base name against reserved names, then use `strings.TrimPrefix` to append the remaining extensions back.
