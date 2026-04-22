@@ -1,0 +1,4 @@
+## 2024-04-22 - Windows DOS Reserved Name Sanitization Bypass
+**Vulnerability:** Path sanitization bypass for multi-extension files (e.g. `CON.tar.gz`). Windows checks the entire string before the *first* dot against DOS reserved names. Relying on `filepath.Ext()` only isolated the final extension (`.gz`), leaving `CON.tar`, which bypassed the blocklist but still triggers the DOS reserved behavior.
+**Learning:** `filepath.Ext()` is insufficient for extracting the base name in systems (like Windows) where legacy behaviors ignore all extensions. You must split on the first dot to correctly isolate the base name from any multi-part extension suffix.
+**Prevention:** Always isolate the base name by splitting at the *first* dot (`strings.SplitN(filename, ".", 2)[0]`) when checking against Windows reserved device names, rather than trimming from the right with `filepath.Ext()`.
