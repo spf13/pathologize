@@ -25,6 +25,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"unicode/utf8"
 )
 
 const (
@@ -58,6 +59,7 @@ func Clean(filename string) string {
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
+	filename = truncateFilename(filename)
 	return filenameNotBlank(filename)
 }
 
@@ -107,8 +109,13 @@ func removeLeadingSpaces(filename string) string {
 }
 
 func truncateFilename(filename string) string {
-	if len(filename) > maxLength {
-		return filename[:maxLength]
+	if len(filename) <= maxLength {
+		return filename
 	}
-	return filename
+	// Walk back from maxLength to avoid splitting a multi-byte UTF-8 sequence.
+	end := maxLength
+	for end > 0 && !utf8.RuneStart(filename[end]) {
+		end--
+	}
+	return filename[:end]
 }

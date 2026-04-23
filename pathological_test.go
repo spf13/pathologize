@@ -1,6 +1,7 @@
 package pathologize
 
 import (
+	"strings"
 	"testing"
 )
 
@@ -142,6 +143,12 @@ func Test_CleanFilename(t *testing.T) {
 		{"reserved with extension", "$Mft.txt", "$Mft_.txt"},
 		{"reserved with multiple extensions", "CON.tar.gz", "CON_.tar.gz"},
 		{"leading dot", ".hidden", ".hidden"},
+		{"long",
+			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbaz",
+			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoo",
+		},
+		// "日" is 3 bytes; 85×3=255 — truncation must land on a rune boundary, not split mid-sequence.
+		{"long unicode", strings.Repeat("日", 100), strings.Repeat("日", 85)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
