@@ -97,12 +97,12 @@ func removeReservedNames(filename string) string {
 	return filename
 }
 
-func removeTrailing(filename string) string {
-	// Define the regular expression to match trailing dots and spaces
-	re := regexp.MustCompile(`[.\s]+$`)
+// Define the regular expression to match trailing dots and spaces
+var trailingReg = regexp.MustCompile(`[.\s]+$`)
 
+func removeTrailing(filename string) string {
 	// Replace all trailing dots and spaces with an empty string
-	return re.ReplaceAllString(filename, "")
+	return trailingReg.ReplaceAllString(filename, "")
 }
 
 func removeLeadingSpaces(filename string) string {
