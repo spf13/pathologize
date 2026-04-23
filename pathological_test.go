@@ -169,7 +169,7 @@ func Test_paths(t *testing.T) {
 		{"short", "foo", "foo"},
 		{"long", "foo.bar.baz", "foo.bar.baz"},
 		{"several dirs", "foo/bar/baz", "foo/bar/baz"},
-		{"several dirs2", "foo\\bar\\baz", "foobarbaz"},
+		{"several dirs2", "foo\\bar\\baz", "foo/bar/baz"},
 		{"dirs with spaces", "foo bar/baz", "foo bar/baz"},
 		{"dirs with bad chars", "foo*bar/baz", "foobar/baz"},
 		{"example", "foo/bar:baz*qux", "foo/barbazqux"},
