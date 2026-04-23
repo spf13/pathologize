@@ -22,7 +22,6 @@ package pathologize
 // https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
 
 import (
-	"path/filepath"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -41,12 +40,14 @@ var (
 )
 
 func CleanPath(path string) string {
-	pathParts := strings.Split(path, string(filepath.Separator))
+	// Normalize backslashes to forward slashes so both separator styles work
+	// consistently on all platforms.
+	path = strings.ReplaceAll(path, "\\", "/")
+	pathParts := strings.Split(path, "/")
 	for i, part := range pathParts {
 		pathParts[i] = Clean(part)
 	}
-
-	return strings.Join(pathParts, string(filepath.Separator))
+	return strings.Join(pathParts, "/")
 }
 
 func IsClean(filename string) bool {
