@@ -142,6 +142,8 @@ func Test_CleanFilename(t *testing.T) {
 		{"windows reserved period", "$Mft.", "$Mft_"},
 		{"reserved with extension", "$Mft.txt", "$Mft_.txt"},
 		{"reserved with multiple extensions", "CON.tar.gz", "CON_.tar.gz"},
+		{"reserved with space before extension", "CON .txt", "CON_.txt"},
+		{"reserved with dots and spaces before extension", "CON . txt", "CON_. txt"},
 		{"leading dot", ".hidden", ".hidden"},
 		{"long",
 			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbaz",
