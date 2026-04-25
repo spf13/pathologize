@@ -111,6 +111,11 @@ func Test_removeReservedNames(t *testing.T) {
 		{"reserved21", "LPT8", "LPT8_"},
 		{"reserved22", "LPT9", "LPT9_"},
 		{"windows reserved", "$Mft", "$Mft_"},
+		{"windows reserved trailing space", "CON ", "CON_"},
+		{"windows reserved trailing spaces", "CON  ", "CON_"},
+		{"windows reserved trailing dot", "CON.", "CON_"},
+		{"windows reserved trailing space and dot", "CON .", "CON_"},
+		{"windows reserved extension space", "CON .txt", "CON .txt"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
