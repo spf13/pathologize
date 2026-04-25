@@ -90,9 +90,13 @@ func filenameWithoutExtension(filename string) string {
 	return strings.SplitN(filename, ".", 2)[0]
 }
 
+var reservedNamesList = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
+
+// removeReservedNames appends an underscore to the filename if it is a reserved name.
+// By checking against a pre-computed list of reserved names we avoid repeated memory
+// allocations inside this frequently called function.
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
-	for _, reservedName := range reservedNames {
+	for _, reservedName := range reservedNamesList {
 		if strings.EqualFold(filename, reservedName) {
 			return reservedName + "_"
 		}
