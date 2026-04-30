@@ -92,9 +92,10 @@ func filenameWithoutExtension(filename string) string {
 
 func removeReservedNames(filename string) string {
 	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
+	cleanName := strings.TrimRight(filename, ".\t\n\f\r ")
 	for _, reservedName := range reservedNames {
-		if strings.EqualFold(filename, reservedName) {
-			return reservedName + "_"
+		if strings.EqualFold(cleanName, reservedName) {
+			return reservedName + "_" + filename[len(cleanName):]
 		}
 	}
 	return filename
