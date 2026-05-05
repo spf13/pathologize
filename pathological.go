@@ -90,9 +90,10 @@ func filenameWithoutExtension(filename string) string {
 	return strings.SplitN(filename, ".", 2)[0]
 }
 
+var reservedNamesList = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
+
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
-	for _, reservedName := range reservedNames {
+	for _, reservedName := range reservedNamesList {
 		if strings.EqualFold(filename, reservedName) {
 			return reservedName + "_"
 		}
