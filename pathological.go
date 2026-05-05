@@ -22,7 +22,6 @@ package pathologize
 // https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
 
 import (
-	"path/filepath"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -40,13 +39,21 @@ var (
 	maxLength            = 255
 )
 
+// pathSeparator is the separator CleanPath splits/joins on. It is
+// intentionally the forward slash on every platform so that output is
+// stable across OSes — Windows filepath.Separator ('\\') is already
+// stripped by CharacterFilterRegex, so using it here would collapse
+// any forward-slash-separated path into a single component on Windows
+// and lose the directory structure.
+const pathSeparator = "/"
+
 func CleanPath(path string) string {
-	pathParts := strings.Split(path, string(filepath.Separator))
+	pathParts := strings.Split(path, pathSeparator)
 	for i, part := range pathParts {
 		pathParts[i] = Clean(part)
 	}
 
-	return strings.Join(pathParts, string(filepath.Separator))
+	return strings.Join(pathParts, pathSeparator)
 }
 
 func IsClean(filename string) bool {
