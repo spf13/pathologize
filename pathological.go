@@ -37,6 +37,7 @@ const (
 var (
 	CharacterFilterRegex = regexp.MustCompile(characterFilter)
 	maxLength            = 255
+	reservedNames        = strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
 )
 
 // pathSeparator is the separator CleanPath splits/joins on. It is
@@ -79,9 +80,11 @@ func filenameNotBlank(filename string) string {
 
 func removeReservedWithExtension(filename string) string {
 	basefilename := filenameWithoutExtension(filename)
-	newfilename := removeReservedNames(basefilename)
-	if basefilename != newfilename {
-		// basefilename is always a true prefix of filename by construction
+	// Trim trailing whitespace and dots from the base before checking — e.g. "CON .txt"
+	// splits into base "CON " which would not otherwise match any reserved name.
+	trimmedBase := strings.TrimRight(basefilename, ".\t\n\f\r ")
+	newfilename := removeReservedNames(trimmedBase)
+	if trimmedBase != newfilename {
 		return newfilename + filename[len(basefilename):]
 	}
 	return filename
@@ -98,7 +101,6 @@ func filenameWithoutExtension(filename string) string {
 }
 
 func removeReservedNames(filename string) string {
-	reservedNames := strings.Split(dosReservedNames+" "+windowsReservedNames, " ")
 	for _, reservedName := range reservedNames {
 		if strings.EqualFold(filename, reservedName) {
 			return reservedName + "_"
