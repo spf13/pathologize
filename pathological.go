@@ -97,7 +97,12 @@ func removeInvalidCharacters(filename string) string {
 }
 
 func filenameWithoutExtension(filename string) string {
-	return strings.SplitN(filename, ".", 2)[0]
+	// Use IndexByte to avoid slice allocation from SplitN.
+	idx := strings.IndexByte(filename, '.')
+	if idx == -1 {
+		return filename
+	}
+	return filename[:idx]
 }
 
 func removeReservedNames(filename string) string {
