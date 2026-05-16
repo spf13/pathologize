@@ -247,3 +247,13 @@ func Test_characterFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestSecurityBypassReservedFixed(t *testing.T) {
+	longName := "CON" + strings.Repeat(" ", 252) + "x"
+	cleaned := Clean(longName)
+
+	trimmed := strings.TrimRight(cleaned, ".\t\n\f\r ")
+	if trimmed == "CON" {
+		t.Errorf("Clean() = %q, want CON_", cleaned)
+	}
+}
