@@ -90,10 +90,31 @@ func removeReservedWithExtension(filename string) string {
 	return filename
 }
 
+// isInvalidChar returns true if the rune is not allowed in filenames.
+func isInvalidChar(r rune) bool {
+	if r <= 0x1F {
+		return true
+	}
+	switch r {
+	case '\\', '/', ':', '*', '?', '"', '<', '>', '|', '@', '!':
+		return true
+	}
+	return false
+}
+
 // removeInvalidCharacters strips characters not allowed in filenames.
 func removeInvalidCharacters(filename string) string {
-	filename = CharacterFilterRegex.ReplaceAllString(filename, "")
-	return filename
+	// Optimization: Use IndexFunc as an allocation-free fast path for valid filenames.
+	if strings.IndexFunc(filename, isInvalidChar) == -1 {
+		return filename
+	}
+	// Optimization: Use strings.Map to filter out characters rather than using a regex engine.
+	return strings.Map(func(r rune) rune {
+		if isInvalidChar(r) {
+			return -1
+		}
+		return r
+	}, filename)
 }
 
 func filenameWithoutExtension(filename string) string {
