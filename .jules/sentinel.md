@@ -1,0 +1,4 @@
+## 2026-05-21 - Path Sanitization Truncation Bypass
+**Vulnerability:** Path sanitization logic could be bypassed by padding a reserved name (e.g. `CON`) with trailing characters (e.g., spaces or dots) beyond the maximum length limit, followed by another character. The trailing characters would hide the reserved name during validation, but be exposed after truncation, leading to a reserved name bypass.
+**Learning:** Always perform length bounding/truncation *before* evaluating semantic meaning, checking for reserved names, or trimming trailing spaces/dots. Truncating after these validation steps can create new string suffixes that bypass the filter logic.
+**Prevention:** Apply length constraints early in the sanitization pipeline, and consider re-applying them at the end if intermediate steps can increase length.

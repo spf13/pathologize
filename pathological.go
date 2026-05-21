@@ -63,11 +63,12 @@ func IsClean(filename string) bool {
 
 func Clean(filename string) string {
 	filename = removeInvalidCharacters(filename)
+	filename = truncateFilename(filename)
 	filename = removeTrailing(filename)
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
-	filename = truncateFilename(filename)
+	filename = truncateFilename(filename) // Truncate again in case reserved name changes increased length
 	return filenameNotBlank(filename)
 }
 
