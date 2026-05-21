@@ -247,3 +247,31 @@ func Test_characterFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestClean_Bypass(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    string
+		expected string
+	}{
+		{
+			name:     "Bypass spaces",
+			input:    "CON" + strings.Repeat(" ", 252) + "x",
+			expected: "CON_",
+		},
+		{
+			name:     "Bypass dots",
+			input:    "CON" + strings.Repeat(".", 252) + "x",
+			expected: "CON_",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			actual := Clean(tt.input)
+			if actual != tt.expected {
+				t.Errorf("Clean(%q) = %q, want %q", tt.input, actual, tt.expected)
+			}
+		})
+	}
+}
