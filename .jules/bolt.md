@@ -1,0 +1,3 @@
+## 2024-05-22 - Zero-allocation string filtering in Go
+**Learning:** Using `regexp.ReplaceAllString` inline for simple character filtering causes massive performance bottlenecks and heap allocations. Pairing `strings.IndexFunc` (fast path for clean strings) with `strings.Map` drastically reduces CPU cycles and heap allocations compared to regex. Additionally, preferring `strings.IndexByte` and slicing over `strings.SplitN` avoids unnecessary allocations.
+**Action:** When filtering characters or extracting prefixes in frequently called Go functions, prefer native `strings` package functions like `strings.IndexFunc`, `strings.Map`, and `strings.IndexByte` over regular expressions and splitting functions that allocate slices.
