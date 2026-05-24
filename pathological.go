@@ -63,11 +63,13 @@ func IsClean(filename string) bool {
 
 func Clean(filename string) string {
 	filename = removeInvalidCharacters(filename)
+	// Truncate before checking reserved names and removing trailing spaces/dots.
+	// Otherwise, truncation could expose a hidden reserved name at the end of the string.
+	filename = truncateFilename(filename)
 	filename = removeTrailing(filename)
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
-	filename = truncateFilename(filename)
 	return filenameNotBlank(filename)
 }
 
