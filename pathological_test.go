@@ -247,3 +247,12 @@ func Test_characterFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestTruncationBypass(t *testing.T) {
+	filename := "CON" + strings.Repeat(" ", 252) + "X"
+	cleaned := Clean(filename)
+	windowsInterpreted := strings.TrimRight(cleaned, ".\t\n\f\r ")
+	if strings.EqualFold(windowsInterpreted, "CON") {
+		t.Errorf("Clean() = %v, interpreted as %v, which bypasses Windows reserved name filter", cleaned, windowsInterpreted)
+	}
+}
