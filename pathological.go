@@ -71,6 +71,17 @@ func Clean(filename string) string {
 	return filenameNotBlank(filename)
 }
 
+func isInvalidChar(r rune) bool {
+	if r >= 0x00 && r <= 0x1F {
+		return true
+	}
+	switch r {
+	case '\\', '/', ':', '*', '?', '"', '<', '>', '|', '@', '!':
+		return true
+	}
+	return false
+}
+
 func filenameNotBlank(filename string) string {
 	if filename == "" {
 		return defaultName
@@ -92,12 +103,25 @@ func removeReservedWithExtension(filename string) string {
 
 // removeInvalidCharacters strips characters not allowed in filenames.
 func removeInvalidCharacters(filename string) string {
-	filename = CharacterFilterRegex.ReplaceAllString(filename, "")
-	return filename
+	// Fast path: strings.IndexFunc avoids allocating and copying memory if the string is already clean.
+	if strings.IndexFunc(filename, isInvalidChar) < 0 {
+		return filename
+	}
+	// strings.Map performs drastically better than a compiled regular expression for removing single characters.
+	return strings.Map(func(r rune) rune {
+		if isInvalidChar(r) {
+			return -1
+		}
+		return r
+	}, filename)
 }
 
 func filenameWithoutExtension(filename string) string {
-	return strings.SplitN(filename, ".", 2)[0]
+	// Using strings.IndexByte and slicing is a zero-allocation alternative to strings.SplitN.
+	if idx := strings.IndexByte(filename, '.'); idx >= 0 {
+		return filename[:idx]
+	}
+	return filename
 }
 
 func removeReservedNames(filename string) string {
