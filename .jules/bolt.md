@@ -1,0 +1,3 @@
+## 2026-05-28 - Zero-Allocation String Operations in Go
+**Learning:** The use of `regexp.ReplaceAllString` and `strings.SplitN` on frequently called hot paths creates significant unnecessary memory allocations and CPU overhead in Go. `strings.IndexFunc` combined with `strings.Map` for character filtering, and `strings.IndexByte` combined with string slicing for prefix extraction, provide zero-allocation fast paths and massive throughput improvements for string sanitation.
+**Action:** When filtering characters or extracting prefixes based on delimiters in hot paths, avoid `regexp` and `strings.SplitN`. Prefer `strings.IndexFunc` and `strings.IndexByte` with slicing for zero-allocation fast paths.
