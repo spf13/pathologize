@@ -27,6 +27,20 @@ func Test_truncateFilename(t *testing.T) {
 	}
 }
 
+func Test_CleanFilename_Bypass(t *testing.T) {
+	// A payload of "CON" + 252 spaces + "x" evaluates to "CON" + 252 spaces
+	// if truncate runs after removing reserved names, bypassing the Windows reserved name filter.
+	// If truncate runs first, the "x" is dropped, and then removeReservedNames catches "CON ".
+	payload := "CON" + strings.Repeat(" ", 252) + "x"
+	got := Clean(payload)
+	if strings.HasSuffix(got, " ") {
+		t.Errorf("Clean() = %v, bypass successful: ends with space after truncation", got)
+	}
+	if got != "CON_" {
+		t.Errorf("Clean() = %v, want %v", got, "CON_")
+	}
+}
+
 func Test_removeSurroundingSpaces(t *testing.T) {
 	tests := []struct {
 		name string
