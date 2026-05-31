@@ -146,6 +146,7 @@ func Test_CleanFilename(t *testing.T) {
 		{"reserved with tab before extension", "CON\t.txt", "CON_.txt"},
 		{"reserved with space before multiple extensions", "CON .tar.gz", "CON_.tar.gz"},
 		{"leading dot", ".hidden", ".hidden"},
+		{"bypass reserved via truncate", "CON" + strings.Repeat(" ", 252) + "a", "CON_"},
 		{"long",
 			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbaz",
 			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoo",
