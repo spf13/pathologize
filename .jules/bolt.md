@@ -1,0 +1,3 @@
+## 2024-05-24 - Zero-allocation string filtering fast path
+**Learning:** For typical clean paths, `regexp.ReplaceAllString` overhead can be avoided entirely. By combining `strings.IndexFunc` for a fast-path check with `strings.Map` for replacement, we achieve zero heap allocations and drastically reduce CPU cycles when strings don't need modifications, which is the 99% case. Similarly, `strings.IndexByte` and slicing avoids `strings.SplitN` allocations.
+**Action:** Always prefer `strings.IndexByte` and `strings.Map` paired with `strings.IndexFunc` over heavy `strings.SplitN` and `regexp` for string validation or extraction where performance matters.
