@@ -247,3 +247,16 @@ func Test_characterFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestSecurityBypassTruncation(t *testing.T) {
+	// Construct: "CON" + 252 spaces + "x"
+	// Length: 3 + 252 + 1 = 256.
+	// Truncated to 255: "CON" + 252 spaces.
+	// Windows interprets "CON                             " as "CON", bypassing the filter.
+	testPath := "CON" + strings.Repeat(" ", 252) + "x"
+	cleanPath := Clean(testPath)
+	trimmed := strings.TrimRight(cleanPath, ".\t\n\f\r ")
+	if trimmed == "CON" {
+		t.Errorf("VULNERABLE (Spaces): Clean(testPath) = %q, want safe name", cleanPath)
+	}
+}
