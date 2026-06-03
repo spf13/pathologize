@@ -1,0 +1,4 @@
+## 2024-10-24 - Path Sanitization Order of Operations Bypass
+**Vulnerability:** Path sanitization logic ordered string truncation after validation checks. This allowed an attacker to pad a Windows reserved name (e.g., `CON`) with 250+ spaces and a trailing valid character, bypassing the reserved name filter, before the final truncation step removed the valid character and restored the malicious payload.
+**Learning:** Truncation and length limits must always be enforced *before* evaluating semantic meaning, checking for reserved names, or trimming trailing characters. Truncating after validation can inadvertently create new string suffixes that bypass the filter logic.
+**Prevention:** Always apply length bounding and character removal first, and execute validation checks (like reserved name blocking) on the final, bounded string.
