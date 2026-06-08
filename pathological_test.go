@@ -128,6 +128,9 @@ func Test_CleanFilename(t *testing.T) {
 		want     string
 	}{
 		{"empty", "", defaultName},
+		{"trailing period bypass via truncation", "CON" + strings.Repeat(".", 252) + "A", "CON_"},
+		{"trailing space bypass via truncation", "CON" + strings.Repeat(" ", 252) + "A", "CON_"},
+		{"trailing space bypass via truncation 2", strings.Repeat("A", 254) + " B", strings.Repeat("A", 254)},
 		{"trailing period", "CON.", "CON_"},
 		{"trailing space", "PRN ", "PRN_"},
 		{"leading space", " PRN", "PRN_"},
