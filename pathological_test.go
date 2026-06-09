@@ -146,6 +146,10 @@ func Test_CleanFilename(t *testing.T) {
 		{"reserved with tab before extension", "CON\t.txt", "CON_.txt"},
 		{"reserved with space before multiple extensions", "CON .tar.gz", "CON_.tar.gz"},
 		{"leading dot", ".hidden", ".hidden"},
+		// truncation bypass: a long string ending with a non-space keeps spaces
+		// hidden from removeTrailing until truncation exposes them.
+		{"reserved name hidden by truncation", "CON" + strings.Repeat(" ", 252) + "a", "CON_"},
+		{"trailing space exposed by truncation", strings.Repeat("A", 254) + " B", strings.Repeat("A", 254)},
 		{"long",
 			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbaz",
 			"foobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoobarbazfoo",
@@ -245,5 +249,29 @@ func Test_characterFilter(t *testing.T) {
 				t.Errorf("characterFilter() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func BenchmarkClean(b *testing.B) {
+	cases := []string{
+		"simple.txt",
+		"CON.txt",
+		"file with spaces and  tabs.txt",
+		"file:with*invalid?chars<here>.txt",
+		strings.Repeat("a", 300) + ".txt",
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for _, c := range cases {
+			Clean(c)
+		}
+	}
+}
+
+func BenchmarkCleanPath(b *testing.B) {
+	path := "C:/Users/dir:e*c?t<o>r|y/CON.txt"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		CleanPath(path)
 	}
 }

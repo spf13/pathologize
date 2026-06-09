@@ -63,11 +63,11 @@ func IsClean(filename string) bool {
 
 func Clean(filename string) string {
 	filename = removeInvalidCharacters(filename)
+	filename = truncateFilename(filename) // must happen before semantic checks
 	filename = removeTrailing(filename)
 	filename = removeLeadingSpaces(filename)
 	filename = removeReservedNames(filename)
 	filename = removeReservedWithExtension(filename)
-	filename = truncateFilename(filename)
 	return filenameNotBlank(filename)
 }
 
@@ -90,14 +90,35 @@ func removeReservedWithExtension(filename string) string {
 	return filename
 }
 
+func isInvalidCharacter(r rune) bool {
+	if r <= '\x1f' {
+		return true
+	}
+	switch r {
+	case '\\', '/', ':', '*', '?', '"', '<', '>', '|', '@', '!':
+		return true
+	}
+	return false
+}
+
 // removeInvalidCharacters strips characters not allowed in filenames.
 func removeInvalidCharacters(filename string) string {
-	filename = CharacterFilterRegex.ReplaceAllString(filename, "")
-	return filename
+	if strings.IndexFunc(filename, isInvalidCharacter) < 0 {
+		return filename
+	}
+	return strings.Map(func(r rune) rune {
+		if isInvalidCharacter(r) {
+			return -1
+		}
+		return r
+	}, filename)
 }
 
 func filenameWithoutExtension(filename string) string {
-	return strings.SplitN(filename, ".", 2)[0]
+	if idx := strings.IndexByte(filename, '.'); idx >= 0 {
+		return filename[:idx]
+	}
+	return filename
 }
 
 func removeReservedNames(filename string) string {
